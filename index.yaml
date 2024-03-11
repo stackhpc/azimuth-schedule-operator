@@ -2,8 +2,24 @@ apiVersion: v1
 entries:
   azimuth-schedule-operator:
   - apiVersion: v2
+    appVersion: 83231b3
+    created: "2024-03-11T15:03:32.102740936Z"
+    dependencies:
+    - alias: metrics
+      condition: metrics.enabled
+      name: kube-state-metrics
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 5.15.3
+    description: Helm chart for deploying the Azimuth schedule operator.
+    digest: 671c257c28f86e1c8072c086f725f3759573245733b5dd81e7e5621b4109fc27
+    name: azimuth-schedule-operator
+    type: application
+    urls:
+    - azimuth-schedule-operator-0.1.0-dev.0.add-initial-operator.4.tgz
+    version: 0.1.0-dev.0.add-initial-operator.4
+  - apiVersion: v2
     appVersion: 0e35bdf
-    created: "2024-03-11T13:14:40.631054799Z"
+    created: "2024-03-11T15:03:32.101177783Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -17,4 +33,4 @@ entries:
     urls:
     - azimuth-schedule-operator-0.1.0-dev.0.add-initial-operator.3.tgz
     version: 0.1.0-dev.0.add-initial-operator.3
-generated: "2024-03-11T13:14:40.628033294Z"
+generated: "2024-03-11T15:03:32.099524262Z"
