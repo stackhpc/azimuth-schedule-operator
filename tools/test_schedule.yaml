@@ -1,0 +1,13 @@
+---
+apiVersion: scheduling.azimuth.stackhpc.com/v1alpha1
+kind: Schedule
+metadata:
+  name: caas-mycluster
+  ownerReferences: []
+spec:
+  ref:
+    apiVersion: caas.azimuth.stackhpc.com/v1alpha1
+    kind: Cluster
+    name: mycluster
+  notBefore: $BEFORE
+  notAfter: $AFTER
