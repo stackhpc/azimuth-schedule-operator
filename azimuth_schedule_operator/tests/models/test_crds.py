@@ -79,12 +79,20 @@ class TestModels(base.TestCase):
                 "type": "object"
               },
               "status": {
+                "nullable": true,
                 "properties": {
                   "refFound": {
+                    "nullable": true,
                     "type": "boolean"
                   },
                   "deleteTriggered": {
+                    "nullable": true,
                     "type": "boolean"
+                  },
+                  "updatedAt": {
+                    "format": "date-time",
+                    "nullable": true,
+                    "type": "string"
                   }
                 },
                 "type": "object"

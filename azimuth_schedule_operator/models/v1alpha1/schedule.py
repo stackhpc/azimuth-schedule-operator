@@ -7,9 +7,10 @@ import pydantic
 
 class ScheduleStatus(schema.BaseModel):
     # updated to show operator found CRD
-    ref_found: bool = False
+    ref_found: schema.Optional[bool] = False
     # updated when delete has been triggered
-    delete_triggered: bool = False
+    delete_triggered: schema.Optional[bool] = False
+    updatedAt: schema.Optional[datetime.datetime] = None
 
 
 class ScheduleRef(schema.BaseModel):
@@ -30,7 +31,9 @@ class Schedule(
     subresources={"status": {}},
 ):
     spec: ScheduleSpec
-    status: ScheduleStatus = pydantic.Field(default_factory=ScheduleStatus)
+    status: schema.Optional[ScheduleStatus] = pydantic.Field(
+        default_factory=ScheduleStatus
+    )
 
 
 def get_fake():
@@ -47,5 +50,4 @@ def get_fake_dict():
             notBefore=datetime.datetime.now(),
             notAfter=datetime.datetime.now() + datetime.timedelta(days=1),
         ),
-        status=dict(ref_found=True, delete_triggered=False),
     )
