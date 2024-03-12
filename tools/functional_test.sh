@@ -22,7 +22,6 @@ kubectl get crds
 export AFTER=$(date --date="-1 hour" +"%Y-%m-%dT%H:%M:%SZ")
 envsubst < $SCRIPT_DIR/test_schedule.yaml | kubectl apply -f -
 
-kubectl get schedule caas-mycluster -o yaml
 until kubectl wait --for=jsonpath='{.status.refFound}'=true schedule caas-mycluster; do echo "wait for refFound"; sleep 5; done
 until kubectl wait --for=jsonpath='{.status.deleteTriggered}'=true schedule caas-mycluster; do echo "wait for deleteTriggered"; sleep 5; done
 kubectl get schedule caas-mycluster -o yaml
