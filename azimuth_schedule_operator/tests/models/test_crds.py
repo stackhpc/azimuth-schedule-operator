@@ -79,7 +79,6 @@ class TestModels(base.TestCase):
                 "type": "object"
               },
               "status": {
-                "nullable": true,
                 "properties": {
                   "refFound": {
                     "nullable": true,

@@ -31,9 +31,7 @@ class Schedule(
     subresources={"status": {}},
 ):
     spec: ScheduleSpec
-    status: schema.Optional[ScheduleStatus] = pydantic.Field(
-        default_factory=ScheduleStatus
-    )
+    status: ScheduleStatus = pydantic.Field(default_factory=ScheduleStatus)
 
 
 def get_fake():
