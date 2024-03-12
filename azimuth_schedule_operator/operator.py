@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import logging
 import os
 import sys
@@ -46,15 +47,59 @@ async def startup(settings, **kwargs):
 
 
 @kopf.on.cleanup()
-async def cleanup(**kwargs):
+async def cleanup(**_):
     if K8S_CLIENT:
         await K8S_CLIENT.aclose()
     LOG.info("Cleanup complete.")
 
 
+async def get_reference(namespace: str, ref: schedule_crd.ScheduleRef):
+    resource = await K8S_CLIENT.api(ref.apiVersion).resource(ref.kind)
+    object = await resource.fetch(ref.name, namespace=namespace)
+    return object
+
+
+async def delete_reference(namespace: str, ref: schedule_crd.ScheduleRef):
+    resource = await K8S_CLIENT.api(ref.apiVersion).resource(ref.kind)
+    await resource.delete(ref.name, namespace=namespace)
+
+
+async def delete_after_delay(delay_seconds, namespace, ref: schedule_crd.ScheduleRef):
+    LOG.info(f"Delete of {ref} will be executed after {delay_seconds} seconds")
+    await asyncio.sleep(delay_seconds)
+
+    await delete_reference(namespace, ref)
+    # TODO(johngarbutt): update crd to say delete has triggered
+    LOG.info(f"Delete complete for {namespace} and {ref}.")
+
+
+async def schedule_delete_task(memo, namespace, schedule):
+    if memo.get("delete_task"):
+        # TODO(johngarbutt): maybe we don't always need to cancel?
+        memo["delete_task"].cancel()
+
+    time_to_delete = datetime.timedelta(minutes=15)
+    scheduled_at = schedule.spec.notBefore - time_to_delete
+    delay_seconds = (scheduled_at - datetime.datetime.now()).total_seconds()
+    if delay_seconds < 0:
+        delay_seconds = 0
+    memo["delete_scheduled_at"] = scheduled_at
+    memo["delete_scheduled_ref"] = schedule.spec.ref
+    memo["delete_task"] = asyncio.create_task(
+        delete_after_delay(delay_seconds, namespace, schedule.spec.ref)
+    )
+
+
 @kopf.on.create(registry.API_GROUP, "schedule")
 @kopf.on.update(registry.API_GROUP, "schedule")
 @kopf.on.resume(registry.API_GROUP, "schedule")
-async def schedule_changed(body, name, namespace, labels, **kwargs):
+async def schedule_changed(memo: kopf.Memo, body, namespace, **_):
     schedule = schedule_crd.Schedule(**body)
-    LOG.error(f"seen schedule changed {schedule.spec}")
+
+    # check we can get the object we are supposed to be managing
+    object = await get_reference(namespace, schedule.spec.ref)
+    LOG.info(f"object found {object}")
+    # TODO(johngarbutt): update object to show we have found the reference
+    # TODO(johngarbutt): maybe check we have an owner relationship?
+
+    await schedule_delete_task(memo, namespace, schedule)

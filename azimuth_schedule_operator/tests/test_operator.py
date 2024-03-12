@@ -1,5 +1,9 @@
+import asyncio
+import datetime
 import unittest
 from unittest import mock
+
+import kopf
 
 from azimuth_schedule_operator.models.v1alpha1 import schedule as schedule_crd
 from azimuth_schedule_operator import operator
@@ -48,5 +52,52 @@ class TestOperator(unittest.IsolatedAsyncioTestCase):
         await operator.cleanup()
         mock_client.aclose.assert_awaited_once_with()
 
-    async def test_cluster_type_create_success(self):
-        await operator.schedule_changed(schedule_crd.get_fake_dict(), "type1", "ns", {})
+    @mock.patch.object(operator, "schedule_delete_task")
+    @mock.patch.object(operator, "get_reference")
+    async def test_schedule_changed(
+        self, mock_get_reference, mock_schedule_delete_task
+    ):
+        memo = kopf.Memo()
+        body = schedule_crd.get_fake_dict()
+        fake = schedule_crd.get_fake()
+        namespace = "ns1"
+
+        await operator.schedule_changed(memo, body, namespace)
+
+        # Assert the expected behavior
+        mock_get_reference.assert_awaited_once_with(namespace, fake.spec.ref)
+        mock_schedule_delete_task.assert_awaited_once_with(memo, namespace, mock.ANY)
+
+    @mock.patch.object(asyncio, "create_task")
+    @mock.patch.object(operator, "delete_after_delay", new_callable=mock.Mock)
+    async def test_schedule_delete_task(
+        self, mock_delete_after_delay, mock_create_task
+    ):
+        memo = kopf.Memo()
+        namespace = "ns1"
+        schedule = schedule_crd.get_fake()
+        mock_create_task.return_value = "sentinel"
+
+        await operator.schedule_delete_task(memo, namespace, schedule)
+
+        # Assert the expected behavior
+        mock_delete_after_delay.assert_called_once_with(0, namespace, schedule.spec.ref)
+        self.assertEqual(
+            memo["delete_scheduled_at"],
+            schedule.spec.notBefore - datetime.timedelta(minutes=15),
+        )
+        self.assertEqual(memo["delete_scheduled_ref"], schedule.spec.ref)
+        mock_create_task.assert_called_once_with(mock.ANY)
+        self.assertEqual(memo["delete_task"], "sentinel")
+
+    @mock.patch.object(asyncio, "sleep")
+    @mock.patch.object(operator, "delete_reference")
+    async def test_delete_after_delay(self, mock_delete_reference, mock_sleep):
+        delay_seconds = 10
+        namespace = "ns1"
+        ref = schedule_crd.get_fake().spec.ref
+
+        await operator.delete_after_delay(delay_seconds, namespace, ref)
+
+        mock_delete_reference.assert_awaited_once_with(namespace, ref)
+        mock_sleep.assert_awaited_once_with(delay_seconds)
