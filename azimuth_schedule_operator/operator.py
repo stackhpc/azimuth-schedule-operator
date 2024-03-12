@@ -128,7 +128,7 @@ async def schedule_changed(memo: kopf.Memo, body, namespace, **_):
 
     # check we can get the object we are supposed to be managing
     object = await get_reference(namespace, schedule.spec.ref)
-    LOG.info(f"object found {object}")
+    LOG.info(f"Found reference: {schedule.spec.ref}")
     await update_schedule(schedule.metadata.name, namespace, ref_found=True)
     # TODO(johngarbutt): maybe check we have an owner relationship?
 

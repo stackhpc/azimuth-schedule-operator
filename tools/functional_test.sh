@@ -19,7 +19,6 @@ until [ `kubectl get crds | grep schedules.scheduling.azimuth.stackhpc.com | wc 
 kubectl get crds
 
 
-export BEFORE=$(date --date="-2 hour" +"%Y-%m-%dT%H:%M:%SZ")
 export AFTER=$(date --date="-1 hour" +"%Y-%m-%dT%H:%M:%SZ")
 envsubst < $SCRIPT_DIR/test_schedule.yaml | kubectl apply -f -
 
