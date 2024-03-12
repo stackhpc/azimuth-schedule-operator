@@ -110,7 +110,7 @@ async def update_schedule(
         status_updates["delete_triggered"] = delete_triggered
 
     status_resource = await K8S_CLIENT.api(registry.API_VERSION).resource(
-        "schedule/status"
+        "schedules/status"
     )
     LOG.info(f"patching {name} in {namespace} with: {status_updates}")
     await status_resource.patch(
