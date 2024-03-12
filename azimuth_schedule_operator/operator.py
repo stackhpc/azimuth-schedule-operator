@@ -54,13 +54,13 @@ async def cleanup(**_):
 
 
 async def get_reference(namespace: str, ref: schedule_crd.ScheduleRef):
-    resource = await K8S_CLIENT.api(ref.apiVersion).resource(ref.kind)
+    resource = await K8S_CLIENT.api(ref.api_version).resource(ref.kind)
     object = await resource.fetch(ref.name, namespace=namespace)
     return object
 
 
 async def delete_reference(namespace: str, ref: schedule_crd.ScheduleRef):
-    resource = await K8S_CLIENT.api(ref.apiVersion).resource(ref.kind)
+    resource = await K8S_CLIENT.api(ref.api_version).resource(ref.kind)
     await resource.delete(ref.name, namespace=namespace)
 
 
