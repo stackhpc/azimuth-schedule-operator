@@ -21,7 +21,6 @@ class ScheduleRef(schema.BaseModel):
 
 class ScheduleSpec(schema.BaseModel):
     ref: ScheduleRef
-    not_before: datetime.datetime
     not_after: datetime.datetime
 
 
@@ -45,7 +44,6 @@ def get_fake_dict():
         metadata=dict(name="test1", uid="fakeuid1", namespace="ns1"),
         spec=dict(
             ref=dict(apiVersion="v1", kind="Pod", name="test1"),
-            notBefore=datetime.datetime.now(),
-            notAfter=datetime.datetime.now() + datetime.timedelta(days=1),
+            notAfter=datetime.datetime.now(),
         ),
     )

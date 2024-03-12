@@ -88,7 +88,7 @@ class TestOperator(unittest.IsolatedAsyncioTestCase):
         mock_delete_after_delay.assert_called_once_with(0, namespace, schedule)
         self.assertEqual(
             memo["delete_scheduled_at"],
-            schedule.spec.not_before - datetime.timedelta(minutes=15),
+            schedule.spec.not_after - datetime.timedelta(minutes=15),
         )
         self.assertEqual(memo["delete_scheduled_ref"], schedule.spec.ref)
         mock_create_task.assert_called_once_with(mock.ANY)

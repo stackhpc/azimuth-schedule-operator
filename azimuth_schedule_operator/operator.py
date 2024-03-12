@@ -81,8 +81,9 @@ async def schedule_delete_task(memo, namespace, schedule: schedule_crd.Schedule)
         # TODO(johngarbutt): maybe we don't always need to cancel?
         memo["delete_task"].cancel()
 
+    # TODO(johngarbutt): add some config in helm to set this?
     time_to_delete = datetime.timedelta(minutes=15)
-    scheduled_at = schedule.spec.not_before - time_to_delete
+    scheduled_at = schedule.spec.not_after - time_to_delete
     delay_seconds = (scheduled_at - datetime.datetime.now()).total_seconds()
     if delay_seconds < 0:
         delay_seconds = 0

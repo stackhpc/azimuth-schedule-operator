@@ -62,10 +62,6 @@ class TestModels(base.TestCase):
                     ],
                     "type": "object"
                   },
-                  "notBefore": {
-                    "format": "date-time",
-                    "type": "string"
-                  },
                   "notAfter": {
                     "format": "date-time",
                     "type": "string"
@@ -73,7 +69,6 @@ class TestModels(base.TestCase):
                 },
                 "required": [
                   "ref",
-                  "notBefore",
                   "notAfter"
                 ],
                 "type": "object"
