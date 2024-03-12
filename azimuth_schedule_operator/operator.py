@@ -106,9 +106,9 @@ async def update_schedule(
     status_updates = dict(updated_at=now_string)
 
     if ref_found is not None:
-        status_updates["ref_found"] = ref_found
+        status_updates["refFound"] = ref_found
     if delete_triggered is not None:
-        status_updates["delete_triggered"] = delete_triggered
+        status_updates["deleteTriggered"] = delete_triggered
 
     status_resource = await K8S_CLIENT.api(registry.API_VERSION).resource(
         "schedules/status"
