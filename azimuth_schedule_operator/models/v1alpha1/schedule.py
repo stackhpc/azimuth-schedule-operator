@@ -10,19 +10,19 @@ class ScheduleStatus(schema.BaseModel):
     ref_found: schema.Optional[bool] = False
     # updated when delete has been triggered
     delete_triggered: schema.Optional[bool] = False
-    updatedAt: schema.Optional[datetime.datetime] = None
+    updated_at: schema.Optional[datetime.datetime] = None
 
 
 class ScheduleRef(schema.BaseModel):
-    apiVersion: str
+    api_version: str
     kind: str
     name: str
 
 
 class ScheduleSpec(schema.BaseModel):
     ref: ScheduleRef
-    notBefore: datetime.datetime
-    notAfter: datetime.datetime
+    not_before: datetime.datetime
+    not_after: datetime.datetime
 
 
 class Schedule(

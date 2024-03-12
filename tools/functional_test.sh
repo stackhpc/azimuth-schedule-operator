@@ -23,5 +23,9 @@ export BEFORE=$(date --date="-2 hour" +"%Y-%m-%dT%H:%M:%SZ")
 export AFTER=$(date --date="-1 hour" +"%Y-%m-%dT%H:%M:%SZ")
 envsubst < $SCRIPT_DIR/test_schedule.yaml | kubectl apply -f -
 
-# until kubectl wait --for=jsonpath='{.status.phase}'=Available clustertype quick-test; do echo "wait for status to appear"; sleep 5; done
 kubectl get schedule caas-mycluster -o yaml
+# until kubectl wait --for=jsonpath='{.status.refFound}'=true schedule caas-mycluster; do echo "wait for status to appear"; sleep 5; done
+# kubectl get schedule caas-mycluster -o yaml
+
+# for debugging get the logs from the operator
+kubectl logs -n azimuth-schedule-operator deployment/azimuth-schedule-operator
