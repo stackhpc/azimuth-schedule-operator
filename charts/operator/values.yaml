@@ -1,7 +1,3 @@
-# Config for the operator
-config:
-  placeholder: "asdf"
-
 # The operator image to use
 image:
   repository: ghcr.io/stackhpc/azimuth-schedule-operator
