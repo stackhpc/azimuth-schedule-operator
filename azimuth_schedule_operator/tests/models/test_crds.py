@@ -76,11 +76,9 @@ class TestModels(base.TestCase):
               "status": {
                 "properties": {
                   "refFound": {
-                    "nullable": true,
                     "type": "boolean"
                   },
                   "deleteTriggered": {
-                    "nullable": true,
                     "type": "boolean"
                   },
                   "updatedAt": {
