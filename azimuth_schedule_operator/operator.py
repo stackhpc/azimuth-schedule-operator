@@ -64,35 +64,21 @@ async def delete_reference(namespace: str, ref: schedule_crd.ScheduleRef):
     await resource.delete(ref.name, namespace=namespace)
 
 
-async def delete_after_delay(delay_seconds, namespace, schedule: schedule_crd.Schedule):
-    LOG.info(
-        f"Delete of {schedule.metadata.name} will be executed "
-        f"after {delay_seconds} seconds"
-    )
-    await asyncio.sleep(delay_seconds)
-
-    await delete_reference(namespace, schedule.spec.ref)
-    await update_schedule(schedule.metadata.name, namespace, delete_triggered=True)
-    LOG.info(f"Delete complete for {namespace} and {schedule.metadata.name}.")
-
-
-async def schedule_delete_task(memo, namespace, schedule: schedule_crd.Schedule):
-    if memo.get("delete_task"):
-        # TODO(johngarbutt): maybe we don't always need to cancel?
-        memo["delete_task"].cancel()
-
+async def check_for_delete(namespace, schedule: schedule_crd.Schedule):
     # TODO(johngarbutt): add some config in helm to set this?
-    time_to_delete = datetime.timedelta(minutes=15)
-    scheduled_at = schedule.spec.not_after - time_to_delete
-    now = datetime.datetime.now(datetime.timezone.utc)
-    delay_seconds = (scheduled_at - now).total_seconds()
-    if delay_seconds < 0:
-        delay_seconds = 0
-    memo["delete_scheduled_at"] = scheduled_at
-    memo["delete_scheduled_ref"] = schedule.spec.ref
-    memo["delete_task"] = asyncio.create_task(
-        delete_after_delay(delay_seconds, namespace, schedule)
+    max_delete_duration_int = int(
+        os.environ.get("AZIMUTH_SCHEDULE_MAX_DELETE_DURATION_MINUTES", "15")
     )
+    max_delete_duration = datetime.timedelta(minutes=max_delete_duration_int)
+    scheduled_at = schedule.spec.not_after - max_delete_duration
+    now = datetime.datetime.now(datetime.timezone.utc)
+
+    if now >= scheduled_at:
+        LOG.info(f"Attempting delete for {namespace} and {schedule.metadata.name}.")
+        await delete_reference(namespace, schedule.spec.ref)
+        await update_schedule(schedule.metadata.name, namespace, delete_triggered=True)
+    else:
+        LOG.info(f"No delete for {namespace} and {schedule.metadata.name}.")
 
 
 async def update_schedule(
@@ -101,7 +87,7 @@ async def update_schedule(
     ref_found: bool = None,
     delete_triggered: bool = None,
 ):
-    now = datetime.datetime.utcnow()
+    now = datetime.datetime.now(datetime.timezone.utc)
     now_string = now.strftime("%Y-%m-%dT%H:%M:%SZ")
     status_updates = dict(updated_at=now_string)
 
@@ -113,7 +99,7 @@ async def update_schedule(
     status_resource = await K8S_CLIENT.api(registry.API_VERSION).resource(
         "schedules/status"
     )
-    LOG.info(f"patching {name} in {namespace} with: {status_updates}")
+    LOG.info(f"Updating status for {name} in {namespace} with: {status_updates}")
     await status_resource.patch(
         name,
         dict(status=status_updates),
@@ -121,16 +107,13 @@ async def update_schedule(
     )
 
 
-@kopf.on.create(registry.API_GROUP, "schedule")
-@kopf.on.update(registry.API_GROUP, "schedule")
-@kopf.on.resume(registry.API_GROUP, "schedule")
-async def schedule_changed(memo: kopf.Memo, body, namespace, **_):
+# check every two minutes
+@kopf.timer(registry.API_GROUP, "schedule", interval=120)
+async def schedule_check(body, namespace, **_):
     schedule = schedule_crd.Schedule(**body)
 
-    # check we can get the object we are supposed to be managing
-    await get_reference(namespace, schedule.spec.ref)
-    LOG.info(f"Found reference: {schedule.spec.ref}")
-    await update_schedule(schedule.metadata.name, namespace, ref_found=True)
-    # TODO(johngarbutt): maybe check we have an owner relationship?
+    if not schedule.status.ref_found:
+        await get_reference(namespace, schedule.spec.ref)
+        await update_schedule(schedule.metadata.name, namespace, ref_found=True)
 
-    await schedule_delete_task(memo, namespace, schedule)
+    await check_for_delete(namespace, schedule)
