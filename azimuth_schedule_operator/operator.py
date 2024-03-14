@@ -13,7 +13,7 @@ from azimuth_schedule_operator.utils import k8s
 LOG = logging.getLogger(__name__)
 K8S_CLIENT = None
 
-CHECK_INTERVAL = int(os.environ.get("AZIMUTH_SCHEDULE_CHECK_INTERVAL", "120"))
+CHECK_INTERVAL_SECONDS = int(os.environ.get("AZIMUTH_SCHEDULE_CHECK_INTERVAL", "120"))
 
 
 @kopf.on.startup()
@@ -70,7 +70,7 @@ async def check_for_delete(namespace, schedule: schedule_crd.Schedule):
     # TODO(johngarbutt): add some config in helm to set this?
     max_delete_duration_int = int(
         os.environ.get("AZIMUTH_SCHEDULE_MAX_DELETE_DURATION_MINUTES", "15")
-    ) + CHECK_INTERVAL
+    ) + int(CHECK_INTERVAL_SECONDS / 60)
     max_delete_duration = datetime.timedelta(minutes=max_delete_duration_int)
     scheduled_at = schedule.spec.not_after - max_delete_duration
     now = datetime.datetime.now(datetime.timezone.utc)
@@ -110,7 +110,7 @@ async def update_schedule(
 
 
 # check every two minutes
-@kopf.timer(registry.API_GROUP, "schedule", interval=CHECK_INTERVAL)
+@kopf.timer(registry.API_GROUP, "schedule", interval=CHECK_INTERVAL_SECONDS)
 async def schedule_check(body, namespace, **_):
     schedule = schedule_crd.Schedule(**body)
 
