@@ -10,14 +10,14 @@ spec:
       rules:
         - alert: AzimuthCaasClusterNotReady
           expr: >-
-            sum(azimuth_schedule_clusters_phase{phase!="Ready"}) by(cluster_namespace, cluster_name) > 0
-          for: 1h
+            sum(azimuth_schedule_delete_triggered{refFound!="True"}) by(schedule_namespace, schedule_name) > 0
+          for: 15m
           annotations:
             description: >-
               Azimuth schedule
-              {{ "{{" }} $labels.cluster_namespace {{ "}}" }}/{{ "{{" }} $labels.cluster_name {{ "}}" }}
-              has been in a non-ready state for longer than one hour.
-            summary: Azimuth schedule has been in a non-ready state for more than one hour.
+              {{ "{{" }} $labels.schedule_namespace {{ "}}" }}/{{ "{{" }} $labels.schedule_name {{ "}}" }}
+              has been in a not found state for longer than 15 mins.
+            summary: Azimuth schedule has not found its ref for longer than 15 mins.
           labels:
             severity: warning
 {{- end }}
