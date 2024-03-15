@@ -10,7 +10,7 @@ spec:
       rules:
         - alert: AzimuthScheduleRefNotFound
           expr: >-
-            sum(azimuth_schedule_delete_triggered{refFound!="True"}) by(schedule_namespace, schedule_name) > 0
+            sum(azimuth_schedule_delete_triggered{schedule_ref_found!="True"}) by(schedule_namespace, schedule_name) > 0
           for: 15m
           annotations:
             description: >-
