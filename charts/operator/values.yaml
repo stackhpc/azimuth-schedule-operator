@@ -100,4 +100,4 @@ metrics:
                   type: Info
                   info:
                     labelsFromPath:
-                      phase: [status, delete_triggered]
+                      delete_triggered: [status, delete_triggered]
