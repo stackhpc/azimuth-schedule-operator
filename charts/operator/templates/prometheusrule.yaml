@@ -8,7 +8,7 @@ spec:
   groups:
     - name: azimuth-schedule-operator.rules
       rules:
-        - alert: AzimuthCaasClusterNotReady
+        - alert: AzimuthScheduleRefNotFound
           expr: >-
             sum(azimuth_schedule_delete_triggered{refFound!="True"}) by(schedule_namespace, schedule_name) > 0
           for: 15m
