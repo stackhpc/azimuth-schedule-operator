@@ -3,7 +3,7 @@ entries:
   azimuth-schedule-operator:
   - apiVersion: v2
     appVersion: 5450fcc
-    created: "2024-03-18T16:08:57.731815001Z"
+    created: "2024-03-18T17:19:02.021390189Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -19,7 +19,7 @@ entries:
     version: 0.1.0-dev.0.main.5
   - apiVersion: v2
     appVersion: c26838c
-    created: "2024-03-18T16:08:57.730407363Z"
+    created: "2024-03-18T17:19:02.019947541Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -35,7 +35,7 @@ entries:
     version: 0.1.0-dev.0.main.4
   - apiVersion: v2
     appVersion: 48b50aa
-    created: "2024-03-18T16:08:57.72897588Z"
+    created: "2024-03-18T17:19:02.018456184Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -51,7 +51,7 @@ entries:
     version: 0.1.0-dev.0.main.3
   - apiVersion: v2
     appVersion: ea1a1bb
-    created: "2024-03-18T16:08:57.726503836Z"
+    created: "2024-03-18T17:19:02.016099742Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -66,8 +66,24 @@ entries:
     - azimuth-schedule-operator-0.1.0-dev.0.main.2.tgz
     version: 0.1.0-dev.0.main.2
   - apiVersion: v2
+    appVersion: 379f087
+    created: "2024-03-18T17:19:02.01024718Z"
+    dependencies:
+    - alias: metrics
+      condition: metrics.enabled
+      name: kube-state-metrics
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 5.15.3
+    description: Helm chart for deploying the Azimuth schedule operator.
+    digest: 52844e2e526d2a5439ffc7347773d4995db62b1abc5a86d65a01d0eff45b04d7
+    name: azimuth-schedule-operator
+    type: application
+    urls:
+    - azimuth-schedule-operator-0.1.0-dev.0.add-schedule-delete.40.tgz
+    version: 0.1.0-dev.0.add-schedule-delete.40
+  - apiVersion: v2
     appVersion: a096013
-    created: "2024-03-18T16:08:57.720746385Z"
+    created: "2024-03-18T17:19:02.008782922Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -83,7 +99,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.39
   - apiVersion: v2
     appVersion: "70534e4"
-    created: "2024-03-18T16:08:57.718719118Z"
+    created: "2024-03-18T17:19:02.006303289Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -99,7 +115,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.38
   - apiVersion: v2
     appVersion: 6348b13
-    created: "2024-03-18T16:08:57.717012141Z"
+    created: "2024-03-18T17:19:02.004869117Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -115,7 +131,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.37
   - apiVersion: v2
     appVersion: 700c269
-    created: "2024-03-18T16:08:57.715572572Z"
+    created: "2024-03-18T17:19:02.003408967Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -131,7 +147,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.36
   - apiVersion: v2
     appVersion: 5a2597f
-    created: "2024-03-18T16:08:57.714161888Z"
+    created: "2024-03-18T17:19:02.001892984Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -147,7 +163,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.35
   - apiVersion: v2
     appVersion: c2a9339
-    created: "2024-03-18T16:08:57.712718944Z"
+    created: "2024-03-18T17:19:02.000443133Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -163,7 +179,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.32
   - apiVersion: v2
     appVersion: c5b668c
-    created: "2024-03-18T16:08:57.711123224Z"
+    created: "2024-03-18T17:19:01.998991328Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -179,7 +195,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.31
   - apiVersion: v2
     appVersion: "9644173"
-    created: "2024-03-18T16:08:57.709396671Z"
+    created: "2024-03-18T17:19:01.996524898Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -195,7 +211,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.29
   - apiVersion: v2
     appVersion: 93f3b16
-    created: "2024-03-18T16:08:57.706910591Z"
+    created: "2024-03-18T17:19:01.995103981Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -211,7 +227,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.27
   - apiVersion: v2
     appVersion: b665c28
-    created: "2024-03-18T16:08:57.705490609Z"
+    created: "2024-03-18T17:19:01.993626138Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -227,7 +243,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.26
   - apiVersion: v2
     appVersion: b9297fb
-    created: "2024-03-18T16:08:57.704076398Z"
+    created: "2024-03-18T17:19:01.992142665Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -243,7 +259,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.24
   - apiVersion: v2
     appVersion: bc40f6a
-    created: "2024-03-18T16:08:57.702601625Z"
+    created: "2024-03-18T17:19:01.990651106Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -259,7 +275,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.22
   - apiVersion: v2
     appVersion: c01aafc
-    created: "2024-03-18T16:08:57.70116911Z"
+    created: "2024-03-18T17:19:01.989200765Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -275,7 +291,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.18
   - apiVersion: v2
     appVersion: 584b870
-    created: "2024-03-18T16:08:57.699663448Z"
+    created: "2024-03-18T17:19:01.986837282Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -291,7 +307,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.16
   - apiVersion: v2
     appVersion: 8e4108b
-    created: "2024-03-18T16:08:57.697191442Z"
+    created: "2024-03-18T17:19:01.985344562Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -307,7 +323,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.15
   - apiVersion: v2
     appVersion: b380fa4
-    created: "2024-03-18T16:08:57.695723671Z"
+    created: "2024-03-18T17:19:01.983889551Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -323,7 +339,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.14
   - apiVersion: v2
     appVersion: 36043bf
-    created: "2024-03-18T16:08:57.694288742Z"
+    created: "2024-03-18T17:19:01.982409053Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -339,7 +355,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.13
   - apiVersion: v2
     appVersion: 2f2401a
-    created: "2024-03-18T16:08:57.692770116Z"
+    created: "2024-03-18T17:19:01.980947461Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -355,7 +371,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.11
   - apiVersion: v2
     appVersion: 9cd8f11
-    created: "2024-03-18T16:08:57.725105154Z"
+    created: "2024-03-18T17:19:02.014641726Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -371,7 +387,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.9
   - apiVersion: v2
     appVersion: 70fb66d
-    created: "2024-03-18T16:08:57.723658422Z"
+    created: "2024-03-18T17:19:02.013190082Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -387,7 +403,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.8
   - apiVersion: v2
     appVersion: 6c0ad79
-    created: "2024-03-18T16:08:57.722187686Z"
+    created: "2024-03-18T17:19:02.011722498Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -403,7 +419,7 @@ entries:
     version: 0.1.0-dev.0.add-schedule-delete.6
   - apiVersion: v2
     appVersion: 8006b73
-    created: "2024-03-18T16:08:57.691229039Z"
+    created: "2024-03-18T17:19:01.979488784Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -419,7 +435,7 @@ entries:
     version: 0.1.0-dev.0.add-initial-operator.9
   - apiVersion: v2
     appVersion: 0cfac18
-    created: "2024-03-18T16:08:57.689547639Z"
+    created: "2024-03-18T17:19:01.977099641Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -435,7 +451,7 @@ entries:
     version: 0.1.0-dev.0.add-initial-operator.8
   - apiVersion: v2
     appVersion: f5d8ba2
-    created: "2024-03-18T16:08:57.68638823Z"
+    created: "2024-03-18T17:19:01.975535829Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -451,7 +467,7 @@ entries:
     version: 0.1.0-dev.0.add-initial-operator.7
   - apiVersion: v2
     appVersion: 34df15b
-    created: "2024-03-18T16:08:57.68450841Z"
+    created: "2024-03-18T17:19:01.974030605Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -467,7 +483,7 @@ entries:
     version: 0.1.0-dev.0.add-initial-operator.6
   - apiVersion: v2
     appVersion: c568369
-    created: "2024-03-18T16:08:57.682914082Z"
+    created: "2024-03-18T17:19:01.972521585Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -483,7 +499,7 @@ entries:
     version: 0.1.0-dev.0.add-initial-operator.5
   - apiVersion: v2
     appVersion: 83231b3
-    created: "2024-03-18T16:08:57.681410415Z"
+    created: "2024-03-18T17:19:01.971019327Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -499,7 +515,7 @@ entries:
     version: 0.1.0-dev.0.add-initial-operator.4
   - apiVersion: v2
     appVersion: 0e35bdf
-    created: "2024-03-18T16:08:57.679892911Z"
+    created: "2024-03-18T17:19:01.969455504Z"
     dependencies:
     - alias: metrics
       condition: metrics.enabled
@@ -513,4 +529,4 @@ entries:
     urls:
     - azimuth-schedule-operator-0.1.0-dev.0.add-initial-operator.3.tgz
     version: 0.1.0-dev.0.add-initial-operator.3
-generated: "2024-03-18T16:08:57.678147392Z"
+generated: "2024-03-18T17:19:01.967387074Z"
