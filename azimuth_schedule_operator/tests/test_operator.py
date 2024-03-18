@@ -80,7 +80,7 @@ class TestOperator(unittest.IsolatedAsyncioTestCase):
 
         mock_delete_reference.assert_awaited_once_with(namespace, schedule.spec.ref)
         mock_update_schedule.assert_awaited_once_with(
-            schedule.metadata.name, namespace, ref_delete_triggered=True
+            namespace, schedule.metadata.name, ref_delete_triggered=True
         )
 
     @mock.patch.object(operator, "update_schedule")

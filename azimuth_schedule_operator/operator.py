@@ -85,7 +85,7 @@ async def check_for_delete(namespace: str, schedule: schedule_crd.Schedule):
         LOG.info(f"Attempting delete for {namespace} and {schedule.metadata.name}.")
         await delete_reference(namespace, schedule.spec.ref)
         await update_schedule(
-            schedule.metadata.name, namespace, ref_delete_triggered=True
+            namespace, schedule.metadata.name, ref_delete_triggered=True
         )
     else:
         LOG.info(f"No delete for {namespace} and {schedule.metadata.name}.")
