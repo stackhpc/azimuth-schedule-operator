@@ -112,3 +112,19 @@ class TestOperator(unittest.IsolatedAsyncioTestCase):
             namespace,
             {"updatedAt": mock.ANY, "refExists": True, "refDeleteTriggered": False},
         )
+
+    @mock.patch.object(operator, "K8S_CLIENT", new_callable=mock.Mock)
+    async def test_get_reference(self, mock_client):
+        mock_resource = mock.AsyncMock()
+        mock_api = mock.AsyncMock()
+        mock_api.resource.return_value = mock_resource
+        mock_client.api.return_value = mock_api
+        mock_resource.fetch.return_value = "result"
+        ref = schedule_crd.ScheduleRef(api_version="v1", kind="Pod", name="pod1")
+
+        result = await operator.get_reference("ns1", ref)
+
+        self.assertEqual(result, "result")
+        mock_client.api.assert_called_once_with("v1")
+        mock_api.resource.assert_awaited_once_with("Pod")
+        mock_resource.fetch.assert_awaited_once_with("pod1", namespace="ns1")
