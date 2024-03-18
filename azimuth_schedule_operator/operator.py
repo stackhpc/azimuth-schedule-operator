@@ -13,7 +13,9 @@ from azimuth_schedule_operator.utils import k8s
 LOG = logging.getLogger(__name__)
 K8S_CLIENT = None
 
-CHECK_INTERVAL_SECONDS = int(os.environ.get("AZIMUTH_SCHEDULE_CHECK_INTERVAL", "120"))
+CHECK_INTERVAL_SECONDS = int(
+    os.environ.get("AZIMUTH_SCHEDULE_CHECK_INTERVAL_SECONDS", "60")
+)
 
 
 @kopf.on.startup()
@@ -67,15 +69,8 @@ async def delete_reference(namespace: str, ref: schedule_crd.ScheduleRef):
 
 
 async def check_for_delete(namespace, schedule: schedule_crd.Schedule):
-    # TODO(johngarbutt): add some config in helm to set this?
-    max_delete_duration_int = int(
-        os.environ.get("AZIMUTH_SCHEDULE_MAX_DELETE_DURATION_MINUTES", "15")
-    ) + int(CHECK_INTERVAL_SECONDS / 60)
-    max_delete_duration = datetime.timedelta(minutes=max_delete_duration_int)
-    scheduled_at = schedule.spec.not_after - max_delete_duration
     now = datetime.datetime.now(datetime.timezone.utc)
-
-    if now >= scheduled_at:
+    if now >= schedule.spec.not_after:
         LOG.info(f"Attempting delete for {namespace} and {schedule.metadata.name}.")
         await delete_reference(namespace, schedule.spec.ref)
         await update_schedule(schedule.metadata.name, namespace, delete_triggered=True)

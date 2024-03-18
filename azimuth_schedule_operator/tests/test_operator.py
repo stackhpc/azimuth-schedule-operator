@@ -1,3 +1,4 @@
+import datetime
 import unittest
 from unittest import mock
 
@@ -79,3 +80,18 @@ class TestOperator(unittest.IsolatedAsyncioTestCase):
         mock_update_schedule.assert_awaited_once_with(
             schedule.metadata.name, namespace, delete_triggered=True
         )
+
+    @mock.patch.object(operator, "update_schedule")
+    @mock.patch.object(operator, "delete_reference")
+    async def test_check_for_delete_skip(
+        self, mock_delete_reference, mock_update_schedule
+    ):
+        namespace = "ns1"
+        schedule = schedule_crd.get_fake()
+        now = datetime.datetime.now(datetime.timezone.utc)
+        schedule.spec.not_after = now + datetime.timedelta(seconds=5)
+
+        await operator.check_for_delete(namespace, schedule)
+
+        mock_delete_reference.assert_not_called()
+        mock_update_schedule.assert_not_called()
