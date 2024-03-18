@@ -75,10 +75,10 @@ class TestModels(base.TestCase):
               },
               "status": {
                 "properties": {
-                  "refFound": {
+                  "refExists": {
                     "type": "boolean"
                   },
-                  "deleteTriggered": {
+                  "refDeleteTriggered": {
                     "type": "boolean"
                   },
                   "updatedAt": {

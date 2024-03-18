@@ -7,9 +7,9 @@ import pydantic
 
 class ScheduleStatus(schema.BaseModel):
     # updated to show operator found CRD
-    ref_found: bool = False
+    ref_exists: bool = False
     # updated when delete has been triggered
-    delete_triggered: bool = False
+    ref_delete_triggered: bool = False
     updated_at: schema.Optional[datetime.datetime] = None
 
 

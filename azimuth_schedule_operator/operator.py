@@ -73,7 +73,9 @@ async def check_for_delete(namespace, schedule: schedule_crd.Schedule):
     if now >= schedule.spec.not_after:
         LOG.info(f"Attempting delete for {namespace} and {schedule.metadata.name}.")
         await delete_reference(namespace, schedule.spec.ref)
-        await update_schedule(schedule.metadata.name, namespace, delete_triggered=True)
+        await update_schedule(
+            schedule.metadata.name, namespace, ref_delete_triggered=True
+        )
     else:
         LOG.info(f"No delete for {namespace} and {schedule.metadata.name}.")
 
@@ -81,17 +83,17 @@ async def check_for_delete(namespace, schedule: schedule_crd.Schedule):
 async def update_schedule(
     name: str,
     namespace: str,
-    ref_found: bool = None,
-    delete_triggered: bool = None,
+    ref_exists: bool = None,
+    ref_delete_triggered: bool = None,
 ):
     now = datetime.datetime.now(datetime.timezone.utc)
     now_string = now.strftime("%Y-%m-%dT%H:%M:%SZ")
     status_updates = dict(updated_at=now_string)
 
-    if ref_found is not None:
-        status_updates["refFound"] = ref_found
-    if delete_triggered is not None:
-        status_updates["deleteTriggered"] = delete_triggered
+    if ref_exists is not None:
+        status_updates["refExists"] = ref_exists
+    if ref_delete_triggered is not None:
+        status_updates["refDeleteTriggered"] = ref_delete_triggered
 
     status_resource = await K8S_CLIENT.api(registry.API_VERSION).resource(
         "schedules/status"
@@ -109,8 +111,8 @@ async def update_schedule(
 async def schedule_check(body, namespace, **_):
     schedule = schedule_crd.Schedule(**body)
 
-    if not schedule.status.ref_found:
+    if not schedule.status.ref_exists:
         await get_reference(namespace, schedule.spec.ref)
-        await update_schedule(schedule.metadata.name, namespace, ref_found=True)
+        await update_schedule(schedule.metadata.name, namespace, ref_exists=True)
 
     await check_for_delete(namespace, schedule)
