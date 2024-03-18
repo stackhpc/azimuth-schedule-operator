@@ -65,8 +65,8 @@ class TestOperator(unittest.IsolatedAsyncioTestCase):
         mock_get_reference.assert_awaited_once_with(namespace, fake.spec.ref)
         mock_check_for_delete.assert_awaited_once_with(namespace, fake)
         mock_update_schedule.assert_awaited_once_with(
-            fake.metadata.name,
             namespace,
+            fake.metadata.name,
             ref_exists=True,
         )
 
@@ -104,12 +104,12 @@ class TestOperator(unittest.IsolatedAsyncioTestCase):
         namespace = "ns1"
 
         await operator.update_schedule(
-            name, namespace, ref_exists=True, ref_delete_triggered=False
+            namespace, name, ref_exists=True, ref_delete_triggered=False
         )
 
         mock_update_schedule_status.assert_awaited_once_with(
-            name,
             namespace,
+            name,
             {"updatedAt": mock.ANY, "refExists": True, "refDeleteTriggered": False},
         )
 
@@ -150,7 +150,7 @@ class TestOperator(unittest.IsolatedAsyncioTestCase):
         mock_api.resource.return_value = mock_resource
         mock_client.api.return_value = mock_api
 
-        await operator.update_schedule_status("test1", "ns1", {"a": "asdf"})
+        await operator.update_schedule_status("ns1", "test1", {"a": "asdf"})
 
         mock_client.api.assert_called_once_with(
             "scheduling.azimuth.stackhpc.com/v1alpha1"

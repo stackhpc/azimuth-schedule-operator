@@ -68,7 +68,7 @@ async def delete_reference(namespace: str, ref: schedule_crd.ScheduleRef):
     await resource.delete(ref.name, namespace=namespace)
 
 
-async def update_schedule_status(name: str, namespace: str, status_updates: dict):
+async def update_schedule_status(namespace: str, name: str, status_updates: dict):
     status_resource = await K8S_CLIENT.api(registry.API_VERSION).resource(
         "schedules/status"
     )
@@ -79,7 +79,7 @@ async def update_schedule_status(name: str, namespace: str, status_updates: dict
     )
 
 
-async def check_for_delete(namespace, schedule: schedule_crd.Schedule):
+async def check_for_delete(namespace: str, schedule: schedule_crd.Schedule):
     now = datetime.datetime.now(datetime.timezone.utc)
     if now >= schedule.spec.not_after:
         LOG.info(f"Attempting delete for {namespace} and {schedule.metadata.name}.")
@@ -92,8 +92,8 @@ async def check_for_delete(namespace, schedule: schedule_crd.Schedule):
 
 
 async def update_schedule(
-    name: str,
     namespace: str,
+    name: str,
     ref_exists: bool = None,
     ref_delete_triggered: bool = None,
 ):
@@ -107,16 +107,15 @@ async def update_schedule(
         status_updates["refDeleteTriggered"] = ref_delete_triggered
 
     LOG.info(f"Updating status for {name} in {namespace} with: {status_updates}")
-    await update_schedule_status(name, namespace, status_updates)
+    await update_schedule_status(namespace, name, status_updates)
 
 
-# check every two minutes
 @kopf.timer(registry.API_GROUP, "schedule", interval=CHECK_INTERVAL_SECONDS)
 async def schedule_check(body, namespace, **_):
     schedule = schedule_crd.Schedule(**body)
 
     if not schedule.status.ref_exists:
         await get_reference(namespace, schedule.spec.ref)
-        await update_schedule(schedule.metadata.name, namespace, ref_exists=True)
+        await update_schedule(namespace, schedule.metadata.name, ref_exists=True)
 
     await check_for_delete(namespace, schedule)
