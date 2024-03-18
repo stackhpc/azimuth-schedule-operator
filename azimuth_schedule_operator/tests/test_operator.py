@@ -128,3 +128,34 @@ class TestOperator(unittest.IsolatedAsyncioTestCase):
         mock_client.api.assert_called_once_with("v1")
         mock_api.resource.assert_awaited_once_with("Pod")
         mock_resource.fetch.assert_awaited_once_with("pod1", namespace="ns1")
+
+    @mock.patch.object(operator, "K8S_CLIENT", new_callable=mock.Mock)
+    async def test_delete_reference(self, mock_client):
+        mock_resource = mock.AsyncMock()
+        mock_api = mock.AsyncMock()
+        mock_api.resource.return_value = mock_resource
+        mock_client.api.return_value = mock_api
+        ref = schedule_crd.ScheduleRef(api_version="v1", kind="Pod", name="pod1")
+
+        await operator.delete_reference("ns1", ref)
+
+        mock_client.api.assert_called_once_with("v1")
+        mock_api.resource.assert_awaited_once_with("Pod")
+        mock_resource.delete.assert_awaited_once_with("pod1", namespace="ns1")
+
+    @mock.patch.object(operator, "K8S_CLIENT", new_callable=mock.Mock)
+    async def test_update_schedule_status(self, mock_client):
+        mock_resource = mock.AsyncMock()
+        mock_api = mock.AsyncMock()
+        mock_api.resource.return_value = mock_resource
+        mock_client.api.return_value = mock_api
+
+        await operator.update_schedule_status("test1", "ns1", {"a": "asdf"})
+
+        mock_client.api.assert_called_once_with(
+            "scheduling.azimuth.stackhpc.com/v1alpha1"
+        )
+        mock_api.resource.assert_awaited_once_with("schedules/status")
+        mock_resource.patch.assert_awaited_once_with(
+            "test1", {"status": {"a": "asdf"}}, namespace="ns1"
+        )
