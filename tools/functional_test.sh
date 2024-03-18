@@ -22,8 +22,9 @@ kubectl get crds
 export AFTER=$(date --date="-1 hour" +"%Y-%m-%dT%H:%M:%SZ")
 envsubst < $SCRIPT_DIR/test_schedule.yaml | kubectl apply -f -
 
-kubectl wait --for=jsonpath='{.status.updatedAt}' schedule caas-mycluster
 kubectl wait --for=jsonpath='{.status.refExists}'=true schedule caas-mycluster
+# ensure updatedAt is written out
+kubectl get schedule caas-mycluster -o yaml | grep "updatedAt"
 kubectl wait --for=jsonpath='{.status.refDeleteTriggered}'=true schedule caas-mycluster
 kubectl get schedule caas-mycluster -o yaml
 

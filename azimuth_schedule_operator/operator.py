@@ -68,6 +68,17 @@ async def delete_reference(namespace: str, ref: schedule_crd.ScheduleRef):
     await resource.delete(ref.name, namespace=namespace)
 
 
+async def update_schedule_status(name: str, namespace: str, status_updates: dict):
+    status_resource = await K8S_CLIENT.api(registry.API_VERSION).resource(
+        "schedules/status"
+    )
+    await status_resource.patch(
+        name,
+        dict(status=status_updates),
+        namespace=namespace,
+    )
+
+
 async def check_for_delete(namespace, schedule: schedule_crd.Schedule):
     now = datetime.datetime.now(datetime.timezone.utc)
     if now >= schedule.spec.not_after:
@@ -88,22 +99,15 @@ async def update_schedule(
 ):
     now = datetime.datetime.now(datetime.timezone.utc)
     now_string = now.strftime("%Y-%m-%dT%H:%M:%SZ")
-    status_updates = dict(updated_at=now_string)
+    status_updates = dict(updatedAt=now_string)
 
     if ref_exists is not None:
         status_updates["refExists"] = ref_exists
     if ref_delete_triggered is not None:
         status_updates["refDeleteTriggered"] = ref_delete_triggered
 
-    status_resource = await K8S_CLIENT.api(registry.API_VERSION).resource(
-        "schedules/status"
-    )
     LOG.info(f"Updating status for {name} in {namespace} with: {status_updates}")
-    await status_resource.patch(
-        name,
-        dict(status=status_updates),
-        namespace=namespace,
-    )
+    await update_schedule_status(name, namespace, status_updates)
 
 
 # check every two minutes

@@ -97,3 +97,18 @@ class TestOperator(unittest.IsolatedAsyncioTestCase):
 
         mock_delete_reference.assert_not_called()
         mock_update_schedule.assert_not_called()
+
+    @mock.patch.object(operator, "update_schedule_status")
+    async def test_update_schedule(self, mock_update_schedule_status):
+        name = "schedule1"
+        namespace = "ns1"
+
+        await operator.update_schedule(
+            name, namespace, ref_exists=True, ref_delete_triggered=False
+        )
+
+        mock_update_schedule_status.assert_awaited_once_with(
+            name,
+            namespace,
+            {"updatedAt": mock.ANY, "refExists": True, "refDeleteTriggered": False},
+        )
