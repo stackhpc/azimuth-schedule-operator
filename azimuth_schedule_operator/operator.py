@@ -118,4 +118,5 @@ async def schedule_check(body, namespace, **_):
         await get_reference(namespace, schedule.spec.ref)
         await update_schedule(namespace, schedule.metadata.name, ref_exists=True)
 
-    await check_for_delete(namespace, schedule)
+    if not schedule.status.ref_delete_triggered:
+        await check_for_delete(namespace, schedule)

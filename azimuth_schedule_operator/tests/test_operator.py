@@ -61,7 +61,6 @@ class TestOperator(unittest.IsolatedAsyncioTestCase):
 
         await operator.schedule_check(body, namespace)
 
-        # Assert the expected behavior
         mock_get_reference.assert_awaited_once_with(namespace, fake.spec.ref)
         mock_check_for_delete.assert_awaited_once_with(namespace, fake)
         mock_update_schedule.assert_awaited_once_with(
@@ -69,6 +68,22 @@ class TestOperator(unittest.IsolatedAsyncioTestCase):
             fake.metadata.name,
             ref_exists=True,
         )
+
+    @mock.patch.object(operator, "update_schedule")
+    @mock.patch.object(operator, "check_for_delete")
+    @mock.patch.object(operator, "get_reference")
+    async def test_schedule_check_skip(
+        self, mock_get_reference, mock_check_for_delete, mock_update_schedule
+    ):
+        body = schedule_crd.get_fake_dict()
+        body["status"] = {"refExists": True, "refDeleteTriggered": True}
+        namespace = "ns1"
+
+        await operator.schedule_check(body, namespace)
+
+        mock_get_reference.assert_not_called()
+        mock_check_for_delete.assert_not_called()
+        mock_update_schedule.assert_not_called()
 
     @mock.patch.object(operator, "update_schedule")
     @mock.patch.object(operator, "delete_reference")
