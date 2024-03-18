@@ -92,7 +92,7 @@ metrics:
               schedule_name: [metadata, name]
               schedule_ref_kind: [spec, ref, kind]
               schedule_ref_name: [spec, ref, name]
-              schedule_ref_found: [status, refFound]
+              schedule_ref_found: [status, refExists]
             metrics:
               - name: delete_triggered
                 help: "Schedule phase"
@@ -100,4 +100,4 @@ metrics:
                   type: Info
                   info:
                     labelsFromPath:
-                      delete_triggered: [status, deleteTriggered]
+                      delete_triggered: [status, refDeleteTriggered]
