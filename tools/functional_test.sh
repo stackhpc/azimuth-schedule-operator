@@ -19,9 +19,14 @@ until [ `kubectl get crds | grep schedules.scheduling.azimuth.stackhpc.com | wc 
 kubectl get crds
 
 
-export BEFORE=$(date --date="-1 hour" +"%Y-%m-%dT%H:%M:%SZ")
-export AFTER=$(date --date="+2 hour" +"%Y-%m-%dT%H:%M:%SZ")
+export AFTER=$(date --date="-1 hour" +"%Y-%m-%dT%H:%M:%SZ")
 envsubst < $SCRIPT_DIR/test_schedule.yaml | kubectl apply -f -
 
-# until kubectl wait --for=jsonpath='{.status.phase}'=Available clustertype quick-test; do echo "wait for status to appear"; sleep 5; done
+kubectl wait --for=jsonpath='{.status.refExists}'=true schedule caas-mycluster
+# ensure updatedAt is written out
+kubectl get schedule caas-mycluster -o yaml | grep "updatedAt"
+kubectl wait --for=jsonpath='{.status.refDeleteTriggered}'=true schedule caas-mycluster
 kubectl get schedule caas-mycluster -o yaml
+
+# for debugging get the logs from the operator
+kubectl logs -n azimuth-schedule-operator deployment/azimuth-schedule-operator

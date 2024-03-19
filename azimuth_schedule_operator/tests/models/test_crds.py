@@ -62,10 +62,6 @@ class TestModels(base.TestCase):
                     ],
                     "type": "object"
                   },
-                  "notBefore": {
-                    "format": "date-time",
-                    "type": "string"
-                  },
                   "notAfter": {
                     "format": "date-time",
                     "type": "string"
@@ -73,18 +69,22 @@ class TestModels(base.TestCase):
                 },
                 "required": [
                   "ref",
-                  "notBefore",
                   "notAfter"
                 ],
                 "type": "object"
               },
               "status": {
                 "properties": {
-                  "refFound": {
+                  "refExists": {
                     "type": "boolean"
                   },
-                  "deleteTriggered": {
+                  "refDeleteTriggered": {
                     "type": "boolean"
+                  },
+                  "updatedAt": {
+                    "format": "date-time",
+                    "nullable": true,
+                    "type": "string"
                   }
                 },
                 "type": "object"

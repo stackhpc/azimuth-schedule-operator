@@ -1,7 +1,3 @@
-# Config for the operator
-config:
-  placeholder: "asdf"
-
 # The operator image to use
 image:
   repository: ghcr.io/stackhpc/azimuth-schedule-operator
@@ -70,7 +66,7 @@ metrics:
     create: true
     extraRules:
       - apiGroups:
-          - schedule.azimuth.stackhpc.com
+          - scheduling.azimuth.stackhpc.com
         resources:
           - schedules
         verbs:
@@ -87,20 +83,21 @@ metrics:
       spec:
         resources:
           - groupVersionKind:
-              group: schedule.azimuth.stackhpc.com
+              group: scheduling.azimuth.stackhpc.com
               version: v1alpha1
               kind: Schedule
-            metricNamePrefix: azimuth_schedule_clusters
+            metricNamePrefix: azimuth_schedule
             labelsFromPath:
-              cluster_namespace: [metadata, namespace]
-              cluster_name: [metadata, name]
-              cluster_type_name: [spec, clusterTypeName]
-              cluster_type_version: [spec, clusterTypeVersion]
+              schedule_namespace: [metadata, namespace]
+              schedule_name: [metadata, name]
+              schedule_ref_kind: [spec, ref, kind]
+              schedule_ref_name: [spec, ref, name]
+              schedule_ref_found: [status, refExists]
             metrics:
-              - name: phase
+              - name: delete_triggered
                 help: "Schedule phase"
                 each:
                   type: Info
                   info:
                     labelsFromPath:
-                      phase: [status, phase]
+                      delete_triggered: [status, refDeleteTriggered]

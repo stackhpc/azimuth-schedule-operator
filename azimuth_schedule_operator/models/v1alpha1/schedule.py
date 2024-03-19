@@ -7,21 +7,21 @@ import pydantic
 
 class ScheduleStatus(schema.BaseModel):
     # updated to show operator found CRD
-    ref_found: bool = False
+    ref_exists: bool = False
     # updated when delete has been triggered
-    delete_triggered: bool = False
+    ref_delete_triggered: bool = False
+    updated_at: schema.Optional[datetime.datetime] = None
 
 
 class ScheduleRef(schema.BaseModel):
-    apiVersion: str
+    api_version: str
     kind: str
     name: str
 
 
 class ScheduleSpec(schema.BaseModel):
     ref: ScheduleRef
-    notBefore: datetime.datetime
-    notAfter: datetime.datetime
+    not_after: datetime.datetime
 
 
 class Schedule(
@@ -44,8 +44,6 @@ def get_fake_dict():
         metadata=dict(name="test1", uid="fakeuid1", namespace="ns1"),
         spec=dict(
             ref=dict(apiVersion="v1", kind="Pod", name="test1"),
-            notBefore=datetime.datetime.now(),
-            notAfter=datetime.datetime.now() + datetime.timedelta(days=1),
+            notAfter=datetime.datetime.now(datetime.timezone.utc),
         ),
-        status=dict(ref_found=True, delete_triggered=False),
     )

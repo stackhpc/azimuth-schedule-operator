@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import logging
 import os
 import sys
@@ -11,6 +12,10 @@ from azimuth_schedule_operator.utils import k8s
 
 LOG = logging.getLogger(__name__)
 K8S_CLIENT = None
+
+CHECK_INTERVAL_SECONDS = int(
+    os.environ.get("AZIMUTH_SCHEDULE_CHECK_INTERVAL_SECONDS", "60")
+)
 
 
 @kopf.on.startup()
@@ -46,15 +51,72 @@ async def startup(settings, **kwargs):
 
 
 @kopf.on.cleanup()
-async def cleanup(**kwargs):
+async def cleanup(**_):
     if K8S_CLIENT:
         await K8S_CLIENT.aclose()
     LOG.info("Cleanup complete.")
 
 
-@kopf.on.create(registry.API_GROUP, "schedule")
-@kopf.on.update(registry.API_GROUP, "schedule")
-@kopf.on.resume(registry.API_GROUP, "schedule")
-async def schedule_changed(body, name, namespace, labels, **kwargs):
+async def get_reference(namespace: str, ref: schedule_crd.ScheduleRef):
+    resource = await K8S_CLIENT.api(ref.api_version).resource(ref.kind)
+    object = await resource.fetch(ref.name, namespace=namespace)
+    return object
+
+
+async def delete_reference(namespace: str, ref: schedule_crd.ScheduleRef):
+    resource = await K8S_CLIENT.api(ref.api_version).resource(ref.kind)
+    await resource.delete(ref.name, namespace=namespace)
+
+
+async def update_schedule_status(namespace: str, name: str, status_updates: dict):
+    status_resource = await K8S_CLIENT.api(registry.API_VERSION).resource(
+        "schedules/status"
+    )
+    await status_resource.patch(
+        name,
+        dict(status=status_updates),
+        namespace=namespace,
+    )
+
+
+async def check_for_delete(namespace: str, schedule: schedule_crd.Schedule):
+    now = datetime.datetime.now(datetime.timezone.utc)
+    if now >= schedule.spec.not_after:
+        LOG.info(f"Attempting delete for {namespace} and {schedule.metadata.name}.")
+        await delete_reference(namespace, schedule.spec.ref)
+        await update_schedule(
+            namespace, schedule.metadata.name, ref_delete_triggered=True
+        )
+    else:
+        LOG.info(f"No delete for {namespace} and {schedule.metadata.name}.")
+
+
+async def update_schedule(
+    namespace: str,
+    name: str,
+    ref_exists: bool = None,
+    ref_delete_triggered: bool = None,
+):
+    now = datetime.datetime.now(datetime.timezone.utc)
+    now_string = now.strftime("%Y-%m-%dT%H:%M:%SZ")
+    status_updates = dict(updatedAt=now_string)
+
+    if ref_exists is not None:
+        status_updates["refExists"] = ref_exists
+    if ref_delete_triggered is not None:
+        status_updates["refDeleteTriggered"] = ref_delete_triggered
+
+    LOG.info(f"Updating status for {name} in {namespace} with: {status_updates}")
+    await update_schedule_status(namespace, name, status_updates)
+
+
+@kopf.timer(registry.API_GROUP, "schedule", interval=CHECK_INTERVAL_SECONDS)
+async def schedule_check(body, namespace, **_):
     schedule = schedule_crd.Schedule(**body)
-    LOG.error(f"seen schedule changed {schedule.spec}")
+
+    if not schedule.status.ref_exists:
+        await get_reference(namespace, schedule.spec.ref)
+        await update_schedule(namespace, schedule.metadata.name, ref_exists=True)
+
+    if not schedule.status.ref_delete_triggered:
+        await check_for_delete(namespace, schedule)
