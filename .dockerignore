@@ -1,0 +1,17 @@
+# Exclude the dockerfile itself
+Dockerfile
+
+# Exclude Python caches
+**/__pycache__
+*.egg-info
+
+# Exclude anything that isn't required for the build
+.dockerignore
+.github
+.gitignore
+.stestr.conf
+charts
+test-requirements.txt
+tilt-component.yaml
+tools
+tox.ini
