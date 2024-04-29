@@ -21,7 +21,7 @@ rules:
   # Allow the managed resources to be deleted by the operator
   {{- range .Values.managedResources }}
   - apiGroups:
-      - {{ .apiGroup }}
+      {{- list .apiGroup | toYaml | nindent 6 }}
     resources:
       {{- toYaml .resources | nindent 6 }}
     verbs:
