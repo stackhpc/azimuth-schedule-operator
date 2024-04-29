@@ -45,6 +45,14 @@ affinity: {}
 # Tolerations for operator pods
 tolerations: []
 
+# The resources that will be managed by the schedule operator
+# By default, the schedule operator is allowed to manage Azimuth CaaS and Kubernetes clusters
+managedResources:
+  - apiGroup: caas.azimuth.stackhpc.com
+    resources: [clusters]
+  - apiGroup: azimuth.stackhpc.com
+    resources: [clusters]
+
 # Settings for kube-state-metrics
 metrics:
   enabled: false

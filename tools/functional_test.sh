@@ -13,7 +13,8 @@ helm upgrade azimuth-schedule-operator ./charts/operator \
   --install \
   --wait \
   --timeout 10m \
-  --set-string image.tag=${GITHUB_SHA::7}
+  --set-string image.tag=${GITHUB_SHA::7} \
+  --set-json 'managedResources=[{"apiGroup": "", "resources": ["configmaps"]}]'
 
 until [ `kubectl get crds | grep schedules.scheduling.azimuth.stackhpc.com | wc -l` -eq 1 ]; do echo "wait for crds"; sleep 5; done
 kubectl get crds

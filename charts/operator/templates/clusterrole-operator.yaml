@@ -18,13 +18,13 @@ rules:
   - apiGroups: ["scheduling.azimuth.stackhpc.com"]
     resources: ["*"]
     verbs: ["*"]
-  # allow these things to be deleted by the operator
-  - apiGroups: ["caas.azimuth.stackhpc.com"]
-    resources: ["clusters"]
-    verbs: ["*"]
-  - apiGroups: [""]
-    resources: ["configmaps"]
-    verbs: ["*"]
-  - apiGroups: ["rbac.authorization.k8s.io"]
-    resources: ["clusterrolebindings"]
-    verbs: ["get", "list", "create", "update", "patch"]
+  # Allow the managed resources to be deleted by the operator
+  {{- range .Values.managedResources }}
+  - apiGroups:
+      {{- list .apiGroup | toYaml | nindent 6 }}
+    resources:
+      {{- toYaml .resources | nindent 6 }}
+    verbs:
+      - get
+      - delete
+  {{- end }}
