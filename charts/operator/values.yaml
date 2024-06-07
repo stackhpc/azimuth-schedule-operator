@@ -81,6 +81,14 @@ metrics:
     create: true
     extraRules:
       - apiGroups:
+          - apiextensions.k8s.io
+        resources:
+          - customresourcedefinitions
+        verbs:
+          - list
+          - watch
+          - get
+      - apiGroups:
           - scheduling.azimuth.stackhpc.com
         resources:
           - schedules
