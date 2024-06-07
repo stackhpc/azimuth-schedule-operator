@@ -51,3 +51,26 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 {{ include "azimuth-schedule-operator.selectorLabels" . }}
 {{- end }}
+
+{{/*
+Produces the metadata for a CRD.
+*/}}
+{{- define "azimuth-schedule-operator.crd.metadata" }}
+metadata:
+  labels: {{ include "azimuth-schedule-operator.labels" . | nindent 4 }}
+  {{- if .Values.crds.keep }}
+  annotations:
+    helm.sh/resource-policy: keep
+  {{- end }}
+{{- end }}
+
+{{/*
+Loads a CRD from the specified file and merges in the metadata.
+*/}}
+{{- define "azimuth-schedule-operator.crd" }}
+{{- $ctx := index . 0 }}
+{{- $path := index . 1 }}
+{{- $crd := $ctx.Files.Get $path | fromYaml }}
+{{- $metadata := include "azimuth-schedule-operator.crd.metadata" $ctx | fromYaml }}
+{{- merge $crd $metadata | toYaml }}
+{{- end }}

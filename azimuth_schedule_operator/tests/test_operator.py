@@ -27,23 +27,6 @@ class TestOperator(unittest.IsolatedAsyncioTestCase):
             },
         }
 
-    @mock.patch("azimuth_schedule_operator.utils.k8s.get_k8s_client")
-    async def test_startup_register_crds(self, mock_get):
-        mock_client = mock.AsyncMock()
-        mock_get.return_value = mock_client
-        mock_settings = mock.Mock()
-
-        await operator.startup(mock_settings)
-
-        # Test that the CRDs were applied
-        mock_client.apply_object.assert_has_awaits([mock.call(mock.ANY, force=True)])
-        # Test that the APIs were checked
-        mock_client.get.assert_has_awaits(
-            [
-                mock.call("/apis/scheduling.azimuth.stackhpc.com/v1alpha1/schedules"),
-            ]
-        )
-
     @mock.patch.object(operator, "K8S_CLIENT", new_callable=mock.AsyncMock)
     async def test_cleanup_calls_aclose(self, mock_client):
         await operator.cleanup()
