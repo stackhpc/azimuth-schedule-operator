@@ -50,12 +50,4 @@ ENV PYTHONUNBUFFERED 1
 # By default, run the operator using kopf
 USER $APP_UID
 ENTRYPOINT ["tini", "-g", "--"]
-CMD [ \
-    "kopf", \
-    "run", \
-    "--module", \
-    "azimuth_schedule_operator.operator", \
-    "--all-namespaces", \
-    "--liveness", \
-    "http://0.0.0.0:8000/healthz" \
-]
+CMD ["python", "-m", "azimuth_schedule_operator"]
