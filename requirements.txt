@@ -42,6 +42,6 @@ stevedore==5.2.0
 tomli==2.0.1
 tomlkit==0.12.4
 typing_extensions==4.10.0
-voluptuous==0.14.2
+voluptuous==0.15.1
 wcwidth==0.2.13
 yarl==1.9.4
