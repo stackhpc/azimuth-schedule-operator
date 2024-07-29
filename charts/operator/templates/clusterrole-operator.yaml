@@ -23,7 +23,7 @@ rules:
     resources: ["clusters"]
     verbs: ["*"]
   - apiGroups: [""]
-    resources: ["configmaps"]
+    resources: ["configmaps", "secrets"]
     verbs: ["*"]
   - apiGroups: ["rbac.authorization.k8s.io"]
     resources: ["clusterrolebindings"]
