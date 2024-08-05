@@ -1,2 +1,1 @@
-# azimuth-schedule-operator
-K8s operator to schedule creation and deletion of Azimuth platforms.
+This repository has moved to https://github.com/azimuth-cloud/azimuth-schedule-operator.
